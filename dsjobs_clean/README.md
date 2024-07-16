@@ -317,3 +317,13 @@ SET
     power_bi = CASE WHEN `Job Description` LIKE '%power bi%' THEN 1 ELSE 0 END,
     big_data = CASE WHEN `Job Description` LIKE '%big data%' THEN 1 ELSE 0 END;
  ```
+
+### Step 9: Saving the cleaned data
+- Finally, we will remove the index column and save the cleaned data.
+ ```sql
+ALTER TABLE uncleaned_ds_jobs
+DROP COLUMN `index`;
+
+CREATE TABLE IF NOT EXISTS cleaned_data AS
+SELECT * FROM uncleaned_ds_jobs;
+ ```

@@ -9,6 +9,6 @@
     <p><b>Dataset:</b> Data Science Job Postings on Glassdoor</p>
     <p><b>Tools Used:</b> SQL, Python</p>
 
-    <h3>Project 2: Data Analysis</h3>
+    <h3>hello</h3>
 </body>
 </html>

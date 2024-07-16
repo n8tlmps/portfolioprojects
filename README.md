@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h2>Project 1: Data Cleaning and Transformation</h2>
+    <h3>Project 1: Data Cleaning and Transformation</h3>
     <p><b>Dataset:</b> Data Science Job Postings on Glassdoor</p>
 </body>
 </html>

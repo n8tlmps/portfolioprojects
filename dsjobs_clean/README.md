@@ -3,7 +3,7 @@
 ## Goal
 The goal of this project is to clean and prepare data from the `uncleaned_ds_jobs` table for analysis. The data is titled 'Data Science Job Posting on Glassdoor' and can be found on [Kaggle](https://www.kaggle.com/datasets/rashikrahmanpritom/data-science-job-posting-on-glassdoor?resource=download).
 
-I used Python package sqlalchemy to import the data into MySQL.
+I used Python package sqlalchemy to import the data into MySQL for querying.
 
 ### Questions of Interest
 - Can you make the salary column into integers?

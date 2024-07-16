@@ -1,7 +1,7 @@
 # Data Cleaning & Transformation
 
 ## Goal
-The goal of this project is to clean and prepare data from the `uncleaned_ds_jobs` table for analysis. The data is titled 'Data Science Job Posting on Glassdoor' and can be found on <a href='https://www.kaggle.com/datasets/rashikrahmanpritom/data-science-job-posting-on-glassdoor?resource=download' Kaggle />
+The goal of this project is to clean and prepare data from the `uncleaned_ds_jobs` table for analysis. The data is titled 'Data Science Job Posting on Glassdoor' and can be found on [Kaggle](https://www.kaggle.com/datasets/rashikrahmanpritom/data-science-job-posting-on-glassdoor?resource=download).
 
 ## Step-by-Step Data Cleaning Process
 

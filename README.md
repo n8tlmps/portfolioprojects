@@ -6,6 +6,6 @@
 </head>
 <body>
     <h2>Project 1: Data Cleaning and Transformation</h2>
-    <p><b>Dataset:</b> Data Science Job Postings on Kaggle</p>
+    <p><b>Dataset:</b> Data Science Job Postings on Glassdoor</p>
 </body>
 </html>

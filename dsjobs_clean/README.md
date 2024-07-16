@@ -189,4 +189,17 @@ ORDER BY count DESC;
 -- Competitors contains 501 '-1's
  ```
 
-### Step 3:
+### Step 3: Transforming all missing values into null values
+ ```sql
+UPDATE uncleaned_ds_jobs
+SET
+    `Rating` = CASE WHEN `Rating` = '-1' THEN NULL ELSE `Rating` END,
+    `Headquarters` = CASE WHEN `Headquarters` = '-1' THEN NULL ELSE `Headquarters` END,
+    `Size` = CASE WHEN `Size` = '-1' OR `Size` LIKE '%Unknown%' THEN NULL ELSE `Size` END,
+    `Founded` = CASE WHEN `Founded` = '-1' THEN NULL ELSE `Founded` END,
+    `Type of ownership` = CASE WHEN `Type of ownership` = '-1' OR `Type of ownership` LIKE '%Unknown%' THEN NULL ELSE `Type of ownership` END,
+    `Industry` = CASE WHEN `Industry` = '-1' THEN NULL ELSE `Industry` END,
+    `Sector` = CASE WHEN `Sector` = '-1' THEN NULL ELSE `Sector` END,
+    `Revenue` = CASE WHEN `Revenue` = '-1' OR `Revenue` LIKE '%Unknown%' THEN NULL ELSE `Revenue` END,
+    `Competitors` = CASE WHEN `Competitors` = '-1' THEN NULL ELSE `Competitors` END;
+ ```

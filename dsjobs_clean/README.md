@@ -10,3 +10,5 @@ The goal of this project is to clean and prepare data from the `uncleaned_ds_job
   ```sql
   DESCRIBE uncleaned_ds_jobs;
   SELECT COUNT(*) FROM uncleaned_ds_jobs; -- The data contains 672 rows.
+  ```
+### Step 1: idfk

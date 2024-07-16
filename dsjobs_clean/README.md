@@ -284,10 +284,9 @@ ALTER TABLE uncleaned_ds_jobs ADD COLUMN hq_state VARCHAR(20);
 UPDATE uncleaned_ds_jobs
 SET hq_state =
 	CASE
-		WHEN LOCATE(',', `Headquarters`) > 0 THEN
-        SUBSTRING_INDEX(`Headquarters`, ',', -1)  -- Get the part after the comma
-                ELSE 'Unknown'
-            END;
+		WHEN LOCATE(',', `Headquarters`) > 0 THEN SUBSTRING_INDEX(`Headquarters`, ',', -1)  -- Get the part after the comma
+		ELSE 'Unknown'
+ 	END;
             
 ALTER TABLE uncleaned_ds_jobs ADD COLUMN same_state TINYINT(1);
 UPDATE uncleaned_ds_jobs

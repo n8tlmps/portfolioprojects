@@ -229,3 +229,36 @@ SET min_salary = CAST(REGEXP_REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(`Salary Est
     avg_salary = (min_salary + max_salary) / 2,
     salary_clean = CONCAT(min_salary, '-', max_salary);
  ```
+
+### Step 6: Creating new columns from `Location`
+- Let's create a `job_state` column by extracting the state abbreviations from the `Location` column, normally placed after the ','.
+ ```sql
+SELECT DISTINCT(`Location`), COUNT(*)
+FROM uncleaned_ds_jobs
+GROUP BY `Location` -- We can see that most Locations list a city followed by ', (state abbrev.)'
+ORDER BY `Location` ASC;
+
+ALTER TABLE uncleaned_ds_jobs ADD COLUMN job_state VARCHAR(10);
+UPDATE uncleaned_ds_jobs
+SET job_state =
+    CASE
+		WHEN Location = 'California' THEN 'CA'
+        WHEN Location = 'New Jersey' THEN 'NJ'
+        WHEN Location = 'Remote' THEN 'Remote'
+        WHEN Location = 'Texas' THEN 'TX'
+        WHEN Location = 'United States' THEN 'Across US'
+        WHEN Location = 'Utah' THEN 'UT'
+        ELSE
+            -- For other locations, attempt to extract state abbreviation
+            CASE
+                WHEN LOCATE(',', Location) > 0 THEN
+                    SUBSTRING_INDEX(Location, ',', -1)  -- Get the part after the comma
+                ELSE 'Unknown'
+            END
+    END;
+
+-- checking for nulls
+SELECT COUNT(job_state) FROM uncleaned_ds_jobs
+WHERE job_state IS NULL;
+-- there are no null values
+ ```

@@ -206,3 +206,11 @@ SET
     `Revenue` = CASE WHEN `Revenue` = '-1' OR `Revenue` LIKE '%Unknown%' THEN NULL ELSE `Revenue` END,
     `Competitors` = CASE WHEN `Competitors` = '-1' THEN NULL ELSE `Competitors` END;
  ```
+
+### Step 4: Correcting Company Name
+ ```sql
+ SELECT `Company Name`
+ FROM uncleaned_ds_jobs LIMIT 5; -- `Company Name` contains mixed values.
+ UPDATE uncleaned_ds_jobs
+ SET `Company Name` = SUBSTRING_INDEX(`Company Name`, '\n', 1); -- removing numbers from `Company Name`
+ ```

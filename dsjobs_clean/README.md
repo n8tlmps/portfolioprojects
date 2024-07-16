@@ -214,3 +214,18 @@ SET
  UPDATE uncleaned_ds_jobs
  SET `Company Name` = SUBSTRING_INDEX(`Company Name`, '\n', 1); -- removing numbers from `Company Name`
  ```
+
+### Step 5: Creating new Salary columns
+- The `Salary Estimate` column is not clean. We will extract a `min_salary`, `max_salary`, and `avg_salary` and store them as integers. We will also create a `salary_clean` column.
+ ```sql
+ALTER TABLE uncleaned_ds_jobs ADD COLUMN min_salary INT;
+ALTER TABLE uncleaned_ds_jobs ADD COLUMN max_salary INT;
+ALTER TABLE uncleaned_ds_jobs ADD COLUMN avg_salary INT;
+ALTER TABLE uncleaned_ds_jobs ADD COLUMN salary_clean TEXT;
+-- We need to remove the '$' and the non-numeric values
+UPDATE uncleaned_ds_jobs
+SET min_salary = CAST(REGEXP_REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(`Salary Estimate`, '-', 1), '$', -1), '[^0-9]', '') AS UNSIGNED),
+    max_salary = CAST(REGEXP_REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(`Salary Estimate`, '-', -1), '$', -1), '[^0-9]', '') AS UNSIGNED),
+    avg_salary = (min_salary + max_salary) / 2,
+    salary_clean = CONCAT(min_salary, '-', max_salary);
+ ```

@@ -7,5 +7,6 @@
 <body>
     <h3>Project 1: Data Cleaning and Transformation</h3>
     <p><b>Dataset:</b> Data Science Job Postings on Glassdoor</p>
+    <p><b>Tools Used:</b> SQL, Python</p>
 </body>
 </html>

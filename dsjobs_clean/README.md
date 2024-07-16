@@ -30,8 +30,8 @@ The goal of this project is to clean and prepare data from the `uncleaned_ds_job
   	`Revenue`,
   	`Competitors`,
     	COUNT(*) AS count
-FROM uncleaned_ds_jobs
-GROUP BY `Job Title`,
+	FROM uncleaned_ds_jobs
+	GROUP BY `Job Title`,
 	`Salary Estimate`,
     	`Job Description`,
     	`Rating`,

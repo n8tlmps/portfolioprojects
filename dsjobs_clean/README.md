@@ -242,7 +242,7 @@ ALTER TABLE uncleaned_ds_jobs ADD COLUMN job_state VARCHAR(10);
 UPDATE uncleaned_ds_jobs
 SET job_state =
     CASE
-		WHEN Location = 'California' THEN 'CA'
+	WHEN Location = 'California' THEN 'CA'
         WHEN Location = 'New Jersey' THEN 'NJ'
         WHEN Location = 'Remote' THEN 'Remote'
         WHEN Location = 'Texas' THEN 'TX'
@@ -260,5 +260,32 @@ SET job_state =
 -- checking for nulls
 SELECT COUNT(job_state) FROM uncleaned_ds_jobs
 WHERE job_state IS NULL;
+-- there are no null values
+ ```
+
+### Step 7: Creating new columns from `Headquarters`
+- Let's create a `hq_state` column and use that to identify if `Headquarters` is in the same state as `Location`.
+ ```sql
+SELECT DISTINCT(`Headquarters`), COUNT(*)
+FROM uncleaned_ds_jobs
+ GROUP BY `Headquarters` -- We can see that most Headquarters list a city followed by ', state'
+ ORDER BY `Headquarters` ASC;
+ 
+ALTER TABLE uncleaned_ds_jobs ADD COLUMN hq_state VARCHAR(20);
+UPDATE uncleaned_ds_jobs
+SET hq_state =
+	CASE
+		WHEN LOCATE(',', `Headquarters`) > 0 THEN
+        SUBSTRING_INDEX(`Headquarters`, ',', -1)  -- Get the part after the comma
+                ELSE 'Unknown'
+            END;
+            
+ALTER TABLE uncleaned_ds_jobs ADD COLUMN same_state TINYINT(1);
+UPDATE uncleaned_ds_jobs
+SET same_state = IF(job_state = hq_state, 1, 0);
+
+-- checking for nulls
+SELECT COUNT(same_state) FROM uncleaned_ds_jobs
+WHERE same_state IS NULL;
 -- there are no null values
  ```

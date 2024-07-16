@@ -47,7 +47,31 @@ The goal of this project is to clean and prepare data from the `uncleaned_ds_job
     `Revenue`,
     `Competitors`
   HAVING count > 1; -- The data contains 18 duplicate rows.
-  ```
+ ```
+
+ ```sql
+  DELETE u1
+  FROM uncleaned_ds_jobs u1
+LEFT JOIN (
+SELECT MAX(`index`) AS `index`
+FROM uncleaned_ds_jobs
+GROUP BY `Job Title`,
+`Salary Estimate`,
+`Job Description`,
+`Rating`,
+`Company Name`,
+`Location`,
+`Headquarters`,
+`Size`,
+`Founded`,
+`Type of ownership`,
+`Industry`,
+`Sector`,
+`Revenue`,
+`Competitors`
+) u2 ON u1.`index` = u2.`index`
+WHERE u2.`index` IS NULL;
+ ```
 
 - **Checking for missing values**: Identified missing values denoted as 'Unknown', '-1', or null values
 
@@ -163,4 +187,6 @@ WHERE `Competitors` LIKE '%Unknown%' OR `Competitors` IS NULL OR `Competitors` =
 GROUP BY `Competitors`
 ORDER BY count DESC;
 -- Competitors contains 501 '-1's
-```
+ ```
+
+### Step 3:

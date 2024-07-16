@@ -71,6 +71,9 @@ The goal of this project is to clean and prepare data from the `uncleaned_ds_job
   `Competitors`)
   u2 ON u1.`index` = u2.`index`
   WHERE u2.`index` IS NULL;
+
+SELECT COUNT(*) FROM uncleaned_ds_jobs;
+-- The data now contains 659 rows
  ```
 
 - **Checking for missing values**: Identified missing values denoted as 'Unknown', '-1', or null values

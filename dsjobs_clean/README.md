@@ -47,7 +47,9 @@ The goal of this project is to clean and prepare data from the `uncleaned_ds_job
     `Revenue`,
     `Competitors`
   HAVING count > 1; -- The data contains 18 duplicate rows.
- 
+ ```
+
+ ```sql
   DELETE u1
   FROM uncleaned_ds_jobs u1
   LEFT JOIN (

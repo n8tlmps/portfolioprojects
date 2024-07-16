@@ -48,9 +48,10 @@ The goal of this project is to clean and prepare data from the `uncleaned_ds_job
     `Competitors`
   HAVING count > 1; -- The data contains 18 duplicate rows.
 ```
+
 - **Checking for missing values**: Identified missing values denoted as 'Unknown', '-1', or null values
-``` sql
--- -- checking for missing values: null, -1, and Unknown ------------------------
+
+```sql
 SELECT DISTINCT(`Job Title`),
 	COUNT(*) AS count
 FROM uncleaned_ds_jobs

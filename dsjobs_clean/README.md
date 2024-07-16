@@ -289,3 +289,31 @@ SELECT COUNT(same_state) FROM uncleaned_ds_jobs
 WHERE same_state IS NULL;
 -- there are no null values
  ```
+### Step 8: Creating new columns on Data Science skills
+- Machine learning, Python, SQL, Excel, Hadoop, Spark, AWS, Tableau, Power BI, and Big Data are all important and common Data Science skills. Let's extract new columns based on these skills from the `Job Description` column.
+ ```sql
+ALTER TABLE uncleaned_ds_jobs
+ADD COLUMN machine_learning TINYINT(1),
+ADD COLUMN python TINYINT(1),
+ADD COLUMN `sql` TINYINT(1),
+ADD COLUMN excel TINYINT(1),
+ADD COLUMN hadoop TINYINT(1),
+ADD COLUMN spark TINYINT(1),
+ADD COLUMN aws TINYINT(1),
+ADD COLUMN tableau TINYINT(1),
+ADD COLUMN power_bi TINYINT(1),
+ADD COLUMN big_data TINYINT(1);
+
+UPDATE uncleaned_ds_jobs
+SET
+    machine_learning = CASE WHEN `Job Description` LIKE '%machine learning%' THEN 1 ELSE 0 END,
+    python = CASE WHEN `Job Description` LIKE '%python%' THEN 1 ELSE 0 END,
+    `sql` = CASE WHEN `Job Description` LIKE '%sql%' THEN 1 ELSE 0 END,
+    excel = CASE WHEN `Job Description` LIKE '%excel%' THEN 1 ELSE 0 END,
+    hadoop = CASE WHEN `Job Description` LIKE '%hadoop%' THEN 1 ELSE 0 END,
+    spark = CASE WHEN `Job Description` LIKE '%spark%' THEN 1 ELSE 0 END,
+    aws = CASE WHEN `Job Description` LIKE '%aws%' THEN 1 ELSE 0 END,
+    tableau = CASE WHEN `Job Description` LIKE '%tableau%' THEN 1 ELSE 0 END,
+    power_bi = CASE WHEN `Job Description` LIKE '%power bi%' THEN 1 ELSE 0 END,
+    big_data = CASE WHEN `Job Description` LIKE '%big data%' THEN 1 ELSE 0 END;
+ ```

@@ -18,17 +18,11 @@ I used Python package `pandas` for loading and manipulating data. I used the fol
 selected_columns = ['Age',
                     'Employment', 
                     'RemoteWork', 
-                    'LearnCode', 
-                    'EdLevel', 
-                    'YearsCode', 
+                    'LearnCode',  
                     'YearsCodePro', 
-                    'DevType', 
                     'OrgSize', 
                     'DatabaseHaveWorkedWith',
-                    'DatabaseWantToWorkWith',
                     'PlatformHaveWorkedWith',
-                    'PlatformWantToWorkWith',
-                    'Industry', 
                     'ConvertedCompYearly']
 df = survey_raw_df[selected_columns]
 ```

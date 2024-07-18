@@ -48,4 +48,5 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 
 **Remote Work**
 ![RemoteWork](assets/remote.png)
-  
+
+- Approximately one-third of survey participants work remotely, and another one-third works hybrid-- demonstrating the growing popularity of flexible work environments.

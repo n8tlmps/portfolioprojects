@@ -38,5 +38,5 @@ For data preprocessing, I renamed the column `ConvertedCompYearly` to `Salary` w
 
 ### Data Visualizations
 I used Python package `pyplot` for visualizing bar graphs and treemaps. These tools allowed me to examine distributions and patterns within selected columns effectively.
-
+![Bar Graph](assets/salary.png)
 ![Organization Size](assets/orgsize.png)

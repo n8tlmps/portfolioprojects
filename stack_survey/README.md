@@ -69,3 +69,7 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 
 - The most common ways to learn coding are **online resources** like **videos, blogs, or forums**. Other common ways are **books/physical media, school, and online courses**. These account for more than two-thirds of the preferred learning methods.
 
+#### **Databases and Cloud Services**
+<img src="assets/databases.png" alt="Database" width="500"/>
+<img src="assets/cloud.png" alt="Cloud" width="500"/>
+

@@ -42,3 +42,6 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 ![Organization Size](assets/orgsize.png)
 
 ## Insights
+**Salary**
+- 7703 individuals reported to make **40K-60K**, composing of the majority 8.64% of respondants. 7210 counts for **60K-80K**, 5887 counts for **80K-100K**, and 4087 counts for **100K-120K**.
+- The treemap of Salary Distribution by `OrgSize` shows that the majority of individuals who earn **60K-80K** work at companies with **20 to 99 employees**, with 1702 respondant counts. This is followed by 1562 respondants work with **100 to 499 employees**. For those who earn **80K-100K**, 1337 reported to work with **20-99 employees** and 1316 work with **100 to 499 employees**.

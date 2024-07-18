@@ -70,6 +70,12 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 - The most common ways to learn coding are **online resources** like **videos, blogs, or forums**. Other common ways are **books/physical media, school, and online courses**. These account for more than two-thirds of the preferred learning methods.
 
 #### **Databases and Cloud Services**
+
 <img src="assets/databases.png" alt="Database" width="500"/>
+
+- The most common databases used are **PostgreSQL, MySQL, SQLite, MongoDB, and Microsoft SQL Server**.
+
 <img src="assets/cloud.png" alt="Cloud" width="500"/>
+
+- The most common cloud platform services are **Amazon Web Services (AWS), Microsoft Azure, Google Cloud, Firebase, and Cloudfare**.
 

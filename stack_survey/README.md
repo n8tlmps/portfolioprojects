@@ -12,7 +12,7 @@ The goal of this project is to conduct a comprehensive data analysis on the [Sta
 
 ## Methodology
 ### Loading Data
-I used Python package `pandas` for loading and manipulating data. I used the following code to select columns that are relevant to my question of interests.
+I used Python package `pandas` for loading and manipulating data. I used the following code to select columns that are relevant to my questions of interest.
 ```python
 # analysis will be conducted on selected columns:
 selected_columns = ['Age',

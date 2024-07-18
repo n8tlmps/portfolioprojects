@@ -9,3 +9,23 @@ The goal of this project is to conduct a comprehensive data analysis on the Stac
    - How does coding experience affect the level of pay?
    - What’s the most popular method of learning to code?
    - What database systems and cloud services are the most popular?
+
+```python
+# analysis will be conducted on selected columns:
+selected_columns = ['Age',
+                    'Employment', 
+                    'RemoteWork', 
+                    'LearnCode', 
+                    'EdLevel', 
+                    'YearsCode', 
+                    'YearsCodePro', 
+                    'DevType', 
+                    'OrgSize', 
+                    'DatabaseHaveWorkedWith',
+                    'DatabaseWantToWorkWith',
+                    'PlatformHaveWorkedWith',
+                    'PlatformWantToWorkWith',
+                    'Industry', 
+                    'ConvertedCompYearly']
+df = survey_raw_df[selected_columns]
+```

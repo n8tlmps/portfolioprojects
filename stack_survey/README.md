@@ -10,6 +10,9 @@ The goal of this project is to conduct a comprehensive data analysis on the Stac
    - What’s the most popular method of learning to code?
    - What database systems and cloud services are the most popular?
 
+### Methodology
+To determine salary patterns for different companies, I clustered 
+
 ```python
 # analysis will be conducted on selected columns:
 selected_columns = ['Age',

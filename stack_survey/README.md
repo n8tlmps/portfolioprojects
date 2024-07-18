@@ -51,3 +51,7 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 
 - Approximately one-third of survey participants work hybrid, and another one-third works remotely. This demonstrates the growing popularity of flexible work environments.
 
+**Coding Experience**
+- The majority of individuals who earn **40K-60K** or **60K-80K** have **5 years of professional coding experience**.
+- The majority of individuals who earn **80K or above** have **10 years of professional coding experience**.
+

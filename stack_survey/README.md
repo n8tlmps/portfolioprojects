@@ -47,7 +47,7 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 - The treemap of Salary Distribution by `OrgSize` shows that the majority of individuals who earn **60K-80K** work at companies with **20 to 99 employees**. The majority of individuals who earn **80K-100K** work at companies with either **20 to 99 employees** or **100-499 employees**. The majority of individuals who earn **100K-120K** work at companies with either **100-499 employees** or **20 to 99 employees**. The majority of individuals who earn **over 200K** work at companies with **10,000 employees or more**.
 
 # Remote Work
-<img src="assets/remote.png" alt="RemoteWork" width="300"/>
+<img src="assets/remote.png" alt="RemoteWork" width="400"/>
 
 - Approximately one-third of survey participants work remotely, and another one-third works hybrid-- demonstrating the growing popularity of flexible work environments.
 

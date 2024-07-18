@@ -64,3 +64,7 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 - The majority of individuals who earn **40K-60K** or **60K-80K** have **5 years of professional coding experience**.
 - The majority of individuals who earn **80K or above** have **10 years of professional coding experience**.
 
+#### **Learning**
+<img src="assets/learncode.png" alt="LearnCode" width="500"/>
+- The most common ways to learn coding are **online resources** like **videos, blogs, or forums**. Other common ways are **books/physical media, school, and online courses**. These account for more than half of the preferred learning methods.
+

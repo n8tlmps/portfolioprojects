@@ -38,7 +38,6 @@ For data preprocessing, I renamed the column `ConvertedCompYearly` to `Salary` w
 
 ### Data Visualizations
 I used Python package `pyplot` for visualizing bar graphs and treemaps. These tools allowed me to examine distributions and patterns within selected columns effectively.
-![Organization Size](assets/orgsize.png)
 
 ## Insights
 #### **Salary**
@@ -46,6 +45,9 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 <img src="assets/salarylevel.png" alt="SalaryLevel" width="500"/>
 
 - 7703 individuals reported to make **40K-60K**, composing of the majority 8.64% of respondants. 7210 counts for **60K-80K**, 5887 counts for **80K-100K**, and 4087 counts for **100K-120K**.
+
+<img src="assets/orgsize.png" alt="OrgSize"/>
+
 - The treemap of Salary Distribution by `OrgSize` shows that the majority of individuals who earn **60K-80K** work at companies with **20 to 99 employees**. The majority of individuals who earn **80K-100K** work at companies with either **20 to 99 employees** or **100-499 employees**. The majority of individuals who earn **100K-120K** work at companies with either **100-499 employees** or **20 to 99 employees**. The majority of individuals who earn **over 200K** work at companies with **10,000 employees or more**.
 
 #### **Remote Work**

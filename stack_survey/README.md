@@ -34,7 +34,7 @@ For data preprocessing, I renamed the column `ConvertedCompYearly` to `Salary` w
 I used Python package `pyplot` for visualizing bar graphs and treemaps. These tools allowed me to examine distributions and patterns within selected columns effectively.
 
 ## Insights
-#### **Salary**
+#### Salary
 
 <img src="assets/salarylevel.png" alt="SalaryLevel" width="500"/>
 
@@ -44,13 +44,13 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 
 - The treemap of Salary Distribution by `OrgSize` shows that the majority of individuals who earn **60K-80K** work at companies with **20 to 99 employees**. The majority of individuals who earn **80K-100K** work at companies with either **20 to 99 employees** or **100-499 employees**. The majority of individuals who earn **100K-120K** work at companies with either **100-499 employees** or **20 to 99 employees**. The majority of individuals who earn **over 200K** work at companies with **10,000 employees or more**.
 
-#### **Remote Work**
+#### Remote Work
 
 <img src="assets/remote.png" alt="RemoteWork" width="400"/>
 
 - Approximately one-third of survey participants work hybrid, and another one-third works remotely. This demonstrates the growing popularity of flexible work environments.
 
-#### **Coding Experience**
+#### Coding Experience
 <img src="assets/proplot.png" alt="proplot" width="500"/>
 <img src="assets/codepro.png" alt="CodePro"/>
 
@@ -58,12 +58,12 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 - The majority of individuals who earn **40K-60K** or **60K-80K** have **5 years of professional coding experience**.
 - The majority of individuals who earn **80K or above** have **10 years of professional coding experience**.
 
-#### **Learning**
+#### Learning
 <img src="assets/learncode.png" alt="LearnCode" width="500"/>
 
 - The most common ways to learn coding are **online resources** like **videos, blogs, or forums**. Other common ways are **books/physical media, school, and online courses**. These account for more than two-thirds of the preferred learning methods.
 
-#### **Databases and Cloud Services**
+#### Databases and Cloud Services
 
 <img src="assets/databases.png" alt="Database" width="500"/>
 
@@ -72,4 +72,7 @@ I used Python package `pyplot` for visualizing bar graphs and treemaps. These to
 <img src="assets/cloud.png" alt="Cloud" width="500"/>
 
 - The most common cloud platform services are **Amazon Web Services (AWS), Microsoft Azure, Google Cloud, Firebase, and Cloudfare**.
+
+## Conclusion
+The use of bar plots and treemaps effectively illustrate that employees at companies with more than 100 employees tend to have higher salaries compared to those at smaller companies. Additionally, there is a growing preference among employees for hybrid or remote working environments. Developers with 10 years of experience are shown to earn salaries above $80,000. The most common methods for learning coding are online resources such as videos, blogs, and forums, with books, physical media, school, and online courses also being popular. The most commonly used databases are PostgreSQL, MySQL, SQLite, MongoDB, and Microsoft SQL Server. Similarly, the most prevalent cloud platform services are Amazon Web Services (AWS), Microsoft Azure, Google Cloud, Firebase, and Cloudflare.
 

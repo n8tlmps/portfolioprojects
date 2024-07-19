@@ -58,30 +58,32 @@ I used Python package sqlalchemy and Kaggle API to import the data into MySQL fo
  ```
 
  ```sql
-  DELETE u1
-  FROM uncleaned_ds_jobs u1
-  LEFT JOIN (
-  SELECT MAX(`index`) AS `index`
-  FROM uncleaned_ds_jobs
-  GROUP BY `Job Title`,
-  `Salary Estimate`,
-  `Job Description`,
-  `Rating`,
-  `Company Name`,
-  `Location`,
-  `Headquarters`,
-  `Size`,
-  `Founded`,
-  `Type of ownership`,
-  `Industry`,
-  `Sector`,
-  `Revenue`,
-  `Competitors`)
-  u2 ON u1.`index` = u2.`index`
-  WHERE u2.`index` IS NULL;
+-- Delete duplicates based on the specified columns, keeping the row with the maximum index
+DELETE u1
+FROM uncleaned_ds_jobs u1
+LEFT JOIN (
+    SELECT MAX(`index`) AS max_index
+    FROM uncleaned_ds_jobs
+    GROUP BY 
+        `Job Title`,
+        `Salary Estimate`,
+        `Job Description`,
+        `Rating`,
+        `Company Name`,
+        `Location`,
+        `Headquarters`,
+        `Size`,
+        `Founded`,
+        `Type of ownership`,
+        `Industry`,
+        `Sector`,
+        `Revenue`,
+        `Competitors`
+) u2 ON u1.`index` = u2.max_index
+WHERE u2.max_index IS NULL;
 
+-- Check the number of rows after removing duplicates
 SELECT COUNT(*) FROM uncleaned_ds_jobs;
--- The data now contains 659 rows
  ```
 - After removing duplicates, the data contains **659 rows**.
 

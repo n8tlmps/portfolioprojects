@@ -1,0 +1,55 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+
+df = read.csv("insurance.csv")
+
+# creating dummy variables
+sex.rel = relevel(as.factor(df$sex), ref="female")
+smoker.rel = relevel(as.factor(df$smoker), ref="no")
+region.rel = relevel(as.factor(df$region), ref="southeast")
+
+# rescaling costs
+chargesK = df$charges/1000
+
+# running normality test on response
+library(rcompanion)
+plotNormalHistogram(chargesK, main="Distribution of Charges", xlab="ChargesK", ylab="Frequency")
+shapiro.test(chargesK)
+
+# finding optimal lambda for Box-cox transformation
+library(MASS)
+BoxCox.fit = boxcox(chargesK ~ age + sex.rel + bmi + children + smoker.rel + region.rel, 
+data=df, lambda=seq(-3,3,1/4),interp = FALSE)
+BoxCox.data<- data.frame(BoxCox.fit$x, BoxCox.fit$y)
+ordered.data<- BoxCox.data[with(BoxCox.data, order(-BoxCox.fit.y)),]
+ordered.data[1,]
+
+# applying Box-cox transformation with lambda=0.25
+# square root transformation
+tr.chargesK = 2 * (sqrt((chargesK)) - 1)
+
+#running normality check of transformed response
+plotNormalHistogram(tr.chargesK, main="Distribution of Transformed Response", xlab="tr.chargesK", ylab="Frequency")
+shapiro.test(tr.chargesK)
+
+# running general linear model on transformed response
+summary(fitted.model<- glm(tr.chargesK ~ age + sex.rel + bmi + children + smoker.rel + region.rel, data=df, family=gaussian(link=identity)))
+cat("Sigma:",sigma(fitted.model))
+
+# checking goodness of fit
+null.model = glm(tr.chargesK ~ 1, data=df, family=gaussian(link=identity))
+deviance = -2*(logLik(null.model) - logLik(fitted.model))
+pvalue = pchisq(deviance, df=8, lower.tail=F)
+cat("Deviance:", deviance, "\npvalue:", pvalue)
+```
+
+```{r}
+# using fitted model for prediction
+pred.tr.chargesK = predict(fitted.model, data.frame(age=22, sex.rel="male", bmi=23.3, children=0,smoker.rel="no", region.rel="southwest"))
+my.pred.chargesK = ((pred.tr.chargesK/2 + 1)^2)*1000
+print(my.pred.chargesK)
+```

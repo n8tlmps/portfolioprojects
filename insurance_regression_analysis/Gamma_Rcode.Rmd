@@ -1,0 +1,33 @@
+---
+title: "Gamma Regression"
+output: html_notebook
+---
+
+```{r}
+
+df = read.csv("insurance.csv")
+
+# creating dummy variables
+sex.rel = relevel(as.factor(df$sex), ref="female")
+smoker.rel = relevel(as.factor(df$smoker), ref="no")
+region.rel = relevel(as.factor(df$region), ref="southeast")
+
+# rescaling costs
+chargesK = df$charges/1000
+
+# fitting gamma regression model
+summary(fitted.model <- glm(chargesK ~ age + sex.rel + bmi + children + smoker.rel + region.rel, data=df, family=Gamma(link=log)))
+
+# checking goodness of fit
+null.model = glm(chargesK ~ 1, data=df, family=Gamma(link=log))
+deviance = -2*(logLik(null.model) - logLik(fitted.model))
+p.value = pchisq(deviance, df=8, lower.tail=F)
+cat("Deviance:", deviance, "\npvalue:", p.value)
+
+```
+
+```{r}
+# using fitted model for prediction
+pred_gam = predict(fitted.model, data.frame(age=22, sex.rel="male", bmi=23.3, children=0, smoker.rel="no", region.rel="southwest"), type="response")
+print(pred_gam*1000)
+```

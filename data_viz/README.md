@@ -48,7 +48,7 @@
       GROUP BY neighbourhood_cleansed
       ORDER BY avg_price DESC;
 
-<img src='q2.png'>
+<img src='img/q2.png'>
 
 <p><b>Who are the hosts with the most listings?</b></p>
 
@@ -59,7 +59,7 @@
       GROUP BY host_neighbourhood, host_id, host_name
       ORDER BY num_listings DESC;
 
-<img src='q3.png'>
+<img src='img/q3.png'>
 
 <p><b>Which months are the most popular to book in prominent neighborhoods?</b></p>
 
@@ -77,11 +77,11 @@
 	ORDER BY 
     		num_reviews DESC;
 
-<img src='q4.png'>
+<img src='img/q4.png'>
 
 <section id='visual'>
 <h2>Dashboard</h2>
-<img src='Dashboard.png'/>
+<img src='img/Dashboard.png'/>
 <p>Check out my interactive <a href="https://public.tableau.com/views/AirbnbAnalysis_17196132959730/Dashboard1?:language=en-US&:sid=&:display_count=n&:origin=viz_share_link">Tableau Dashboard</a></p>
 
 </html>

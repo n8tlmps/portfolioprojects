@@ -38,7 +38,7 @@
       GROUP BY neighbourhood_cleansed
       ORDER BY num_listings DESC;
 
-<img src='q1.png'>
+<img src='img/q1.png'>
 <p><b>What are the most expensive neighbourhoods to book?</b></p>
 
 <!-- what are the most expensive neighborhoods-->

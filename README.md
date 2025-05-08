@@ -12,7 +12,7 @@
     <h3><a href='https://github.com/n8tmps/portfolioprojects/tree/main/stack_survey'>Project 2</a>: Data Analysis</h3>
         <p><b>Dataset:</b> Stack Overflow Annual Developer Survey (2023)</p>
         <p><b>Tools Used:</b> Python</p>
-    <h3><a href='https://github.com/n8tmps/airbnb-analysis-sd'>Project 3</a>: Data Visualization</h3>
+    <h3><a href='https://github.com/n8tlmps/portfolioprojects/tree/main/data_viz'>Project 3</a>: Data Visualization</h3>
         <p><b>Dataset:</b> Airbnb Listings Data</p>
         <p><b>Tools Used:</b> Tableau, SQL, Python</p>
 </body>

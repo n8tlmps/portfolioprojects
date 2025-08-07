@@ -2,6 +2,7 @@ import pandas as pd
 import mysql.connector
 from mysql.connector import Error
 import numpy as np
+import kagglehub
 
 def dataframe_to_mysql(df, table_name, connection_config, if_exists='replace'):
     """
@@ -145,9 +146,10 @@ def quick_insert(df, table_name, connection_config):
 
 # Usage Examples:
 if __name__ == "__main__":
-    # Your DataFrame
-    df = pd.read_csv("Uncleaned_DS_jobs.csv")
     
+    path = kagglehub.dataset_download("rashikrahmanpritom/data-science-job-posting-on-glassdoor")
+    df = pd.read_csv(path + "/Uncleaned_DS_jobs.csv")
+       
     # Connection configuration
     config = {
         'host': 'localhost',
@@ -164,4 +166,5 @@ if __name__ == "__main__":
     # quick_insert(df, 'DS_jobs_quick', config)
     
     # Method 3: Append to existing table
+
     # dataframe_to_mysql(df, 'DS_jobs', config, if_exists='append')

@@ -1,0 +1,498 @@
+---
+title: "WageAnalysis"
+author: "Nate Talampas"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(dbplyr)
+```
+
+1. Goal: What determines wages in modern job postings? Can we reduce the features to major components (skills, firm characteristics, job traits)?
+
+2. Data Wrangling: Clean job postings, extract states, firm info, convert skills to booleans.
+
+3. EDA: Distributions of salary by job type, seniority, sector, state, etc.
+
+4. PCA:
+
+  - On skills: what are the latent "tech stacks"?
+
+  - On firm/job features: what dimensions explain most wage variance?
+
+5. Model:
+
+  - Predict avg_salary using regression (e.g., linear, ridge, XGBoost).
+
+  - Try SHAP for interpretability if doing ML.
+
+6. Insights: "What skills give the highest wage lift?" "Do big firms pay more?" "Is there a bias by job state vs HQ state?"
+
+7. Conclusion: Show how findings could help job seekers, firms, or policy makers.
+
+# Connection to a MySQL Database
+```{r}
+# Libraries
+library(RMariaDB)
+library(DBI)
+
+# parameters
+user = 'root'
+password = 'IlokanoAko1!'
+database = 'db'
+host = 'localhost'
+port = 3306
+```
+
+```{r}
+# connect to the database
+connection = dbConnect(
+  drv = MariaDB(),
+  dbname = database,
+  user = user,
+  password = password,
+  host = host,
+  port = port
+)
+```
+
+```{r}
+# fetch results
+data = tbl(connection, "ds_jobs") %>%
+  collect()
+
+```
+
+```{r}
+# Disconnect
+dbDisconnect(connection)
+```
+
+
+
+```{r}
+# extract columns of interest and store in df
+df = data %>%
+  dplyr::select(`Job Title`, `Rating`, `Company Name`, `Size`, `Founded`, `Type of ownership`, `Industry`, `Sector`, `Revenue`, `Competitors`, `min_salaryK`, `max_salaryK`, `avg_salaryK`, job_state, hq_state, same_state, machine_learning, python, sql, excel, hadoop, spark, aws, tableau, power_bi, big_data) %>%
+  rename_with(~ str_replace_all(tolower(.), " ", "_")) %>%
+   mutate(company_name = str_replace_all(company_name, "\\\\n|\n", "") %>%
+                            str_trim())
+head(df)
+```
+
+# Exploratory Data Analysis
+
+```{r}
+colSums(is.na(df))
+```
+
+- `rating` is missing 39 values
+- `size` is missing 33 values
+- `founded` is missing 107 values
+- `type of ownership` is missing 20 values
+- `industry` is missing 60
+- `sector` is missing 60
+- `revenue` is missing 228
+- `competitors` is missing 488
+
+Maybe sensitive company information like revenue and competitors are left off job applications.
+
+```{r}
+library(dplyr)
+# Convert job_title column encoding to Latin1
+df$job_title <- iconv(df$job_title, from = "", to = "latin1", sub = "")
+
+df %>%
+  count(job_title, sort = TRUE)
+
+
+```
+
+We can observe that Data Scientist is the number one job title on the job market in this dataset. It's followed by Data Engineer, ML engineer, and Data Analyst. Other positions require Data Science skills, but the responsibilities are ambiguous to each company.
+
+**Question of Interest: What skills can be grouped into components for analysis? This can be done with dimensionality reduction.**
+
+```{r}
+boxplot(df$rating)
+```
+
+
+```{r}
+summary(df$rating)
+```
+
+```{r}
+df %>%
+  count(size, sort = TRUE)
+```
+
+Most of the companies have 51-200 or 1001-5000 employees. Do larger companies offer higher mean salaries?
+
+We can feature engineer a company_size factor variable: small (1-200 employees), medium (201-1000), large (1001-10000+ employees)
+
+```{r}
+df <- df %>%
+  mutate(
+    company_size = case_when(
+      size %in% c("1 to 50 employees", "51 to 200 employees") ~ "small",
+      size %in% c("201 to 500 employees", "501 to 1000 employees") ~ "medium",
+      size %in% c("1001 to 5000 employees", "5001 to 10000 employees", "10000+ employees") ~ "large",
+      TRUE ~ NA_character_
+    ),
+    company_size = factor(company_size, levels = c("small", "medium", "large"))
+  )
+
+df %>% count(company_size, sort=T)
+```
+
+
+```{r}
+library(bit64)
+df$founded_num <- as.numeric(df$founded)
+
+# Create a frequency table of founded years
+year_counts <- table(df$founded_num)
+
+# Bar plot of counts per year
+barplot(year_counts,
+        las = 2,                  # Rotate labels for readability
+        col = "lightblue",
+        main = "Count of Founded Year",
+        xlab = "Founded Year",
+        ylab = "Count",
+        cex.names = 0.7,          # Adjust label size
+        space = 0.5)
+
+```
+
+Most of the companies were launched in the 2000s. This could be attributed to the rise of tech start ups. Do older companies pay more?
+
+
+```{r}
+df %>%
+  count(type_of_ownership, sort = TRUE)
+
+```
+Most of the companies are in the private sector, followed by the public sector. Does private vs public have a pay difference?
+
+Let's focus our ownership type on: Company - Private, Company - Public, Nonprofit Organization, Subsidiary or Business Segment. These variables are the only ones with sample size maybe large enough to converge in distribution.
+
+```{r}
+df <- df %>%
+  mutate(
+    ownership_type = case_when(
+      type_of_ownership %in% c("Company - Private", 
+                                 "Company - Public") ~ type_of_ownership,
+      TRUE ~ "Other"
+    ),
+    ownership_type = factor(ownership_type)
+  )
+
+df %>% count(ownership_type)
+```
+
+
+```{r}
+df %>%
+  count(sector, sort = TRUE)
+```
+IT and Business Services are the top sectors. Do certain sectors pay more?
+
+```{r}
+df %>%
+  count(revenue, sort = TRUE)
+```
+
+Most companies left out there revenue. This is sensitive information, so it makes sense. Do companies with more revenue pay more?
+
+```{r}
+# Split and unnest competitors into long format
+competitors_long <- df %>%
+  dplyr::select(competitors) %>%
+  mutate(competitors = strsplit(as.character(competitors), ",")) %>%
+  unnest(competitors) %>%
+  mutate(competitors = trimws(competitors))  # Remove leading/trailing whitespace
+
+competitor_counts <- competitors_long %>%
+  group_by(competitors) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
+top_n <- 15
+top_competitors <- competitor_counts %>%
+  slice_head(n = top_n)
+
+ggplot(top_competitors, aes(x = reorder(competitors, count), y = count)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Top Competitors by Frequency",
+       x = "Competitor",
+       y = "Count") +
+  theme_minimal()
+
+```
+
+Most job postings leave out their competitors, but the top reported competitors are Booz Allen Hamilton, Novartis, Los Alamos National Laboratory, GlaxoSmithKline, and Roche. Are these competitors in industries that are in high competition?
+
+
+```{r}
+hist(df$avg_salaryk)
+```
+
+```{r}
+summary(df$avg_salaryk)
+```
+
+There seems to be outliers in average salary, since average salary is centered around \$124,000. However, a fraction of the job postings have average salaries of above \$250,000. This is an issue because these outliers may distort our regression coefficients. We can use Cook's distance to identify outliers.
+
+
+```{r}
+# Create pie chart with ggplot2
+ggplot(df, aes(x = "", fill = factor(same_state))) +
+  geom_bar(width = 1) +
+  coord_polar("y", start = 0) +
+  labs(title = "Distribution of Same State",
+       fill = "Same State") +
+  theme_void()
+```
+
+The majority of job postings have their headquarters in the same state as the job's station.
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+
+# Reshape data for ggplot
+skills_long <- df %>%
+  dplyr::select(machine_learning, python, sql, excel, hadoop, 
+         spark, aws, tableau, power_bi, big_data) %>%
+  pivot_longer(everything(), names_to = "skill", values_to = "has_skill") %>%
+  group_by(skill) %>%
+  summarise(count = sum(has_skill, na.rm = TRUE))
+
+
+# Create bar plot
+ggplot(skills_long, aes(x = reorder(skill, count), y = count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +  # Horizontal bars for better readability
+  labs(title = "Frequency of Data Science Skills",
+       x = "Skills",
+       y = "Count") +
+  theme_minimal()
+```
+
+Python, machine learning, and SQL are the top frequently counted skills on job postings. Do these skills correspond to higher average salary?
+
+## Discussing missing values
+
+```{r}
+colSums(is.na(df))
+dim(df)
+```
+
+```{r}
+# can omit job_title since they are all data science related jobs
+# can we use EM algorithm to impute missing values for rating
+# company name is like a unique key, let's omit
+# size must be a factor
+# founded?
+# type_of_ownership must be a factor
+# industry must be a factor
+# can omit competitors since most of its missing, and they don't answer the research question
+# avg_salary is our target variable
+# job_state must be a factor
+# same_state is an indicator variable
+# machine_learning, python, sql, excel, hadoop, spark, aws, tableau, power_bi, big_data are all binary variables
+
+
+# Load required libraries
+library(dplyr)
+library(VIM)  # for EM algorithm imputation
+#library(mice) # alternative for missing value imputation
+
+# ================================================================
+# DATA PREPARATION
+# ================================================================
+
+# Remove irrelevant columns
+df_clean <- df %>%
+  dplyr::select(-job_title, -company_name, -size, -competitors, -founded, -hq_state, -founded_num)
+
+# Convert categorical variables to factors
+df_clean$company_size <- as.factor(df_clean$company_size)
+df_clean$ownership_type <- as.factor(df_clean$ownership_type)
+df_clean$industry <- as.factor(df_clean$industry)
+df_clean$sector <- as.factor(df_clean$sector)
+df_clean$job_state <- as.factor(df_clean$job_state)
+```
+
+```{r}
+head(df_clean, 30)
+```
+
+```{r}
+# we need company_size and ownership_type to be numeric features... so let's create binary/indicator variables
+
+# Binary variables for company_size
+df_clean$size_small <- ifelse(df_clean$company_size == "small", 1, 0)
+df_clean$size_medium <- ifelse(df_clean$company_size == "medium", 1, 0)
+df_clean$size_large <- ifelse(df_clean$company_size == "large", 1, 0)
+
+
+# Binary variables for ownership_type
+df_clean$own_private <- ifelse(df_clean$ownership_type == "Company - Private", 1, 0)
+df_clean$own_public <- ifelse(df_clean$ownership_type == "Company - Public", 1, 0)
+df_clean$own_other <- ifelse(df_clean$ownership_type == "Other", 1, 0)
+
+```
+
+```{r}
+colSums(is.na(df_clean))
+```
+
+```{r}
+# ================================================================
+# mice FOR MULTIPLE IMPUTATION
+# ================================================================
+
+library(mice)
+
+# Select only numeric predictors and a few relevant factors (exclude high-cardinality columns)
+impute_data <- df_clean[, c("rating", "avg_salaryk", "min_salaryk", "max_salaryk")]
+
+# Perform multiple imputation
+imputed <- mice(impute_data, m = 1, method = "pmm", seed = 123)
+
+# Replace the original rating column with imputed one
+df_clean$rating <- complete(imputed)$rating
+```
+
+
+
+```{r}
+colSums(is.na(df_clean))
+```
+
+```{r}
+summary(df_clean)
+```
+
+```{r}
+summary(df_clean$rating)
+summary(df$rating)
+
+# The distribution of rating did not change too much after imputing
+```
+
+## EDA on cleaned data
+
+```{r}
+head(df_clean)
+```
+```{r}
+df_filtered = df_clean %>%
+  dplyr::select(rating, min_salaryk, max_salaryk, avg_salaryk, job_state, same_state, machine_learning, python, sql, excel, hadoop, spark, aws, tableau, power_bi, big_data, size_small, size_medium, size_large, own_private, own_public, own_other)
+```
+
+
+```{r}
+library(corrplot)
+X = dplyr::select(df_filtered, -c(avg_salaryk, min_salaryk, max_salaryk))
+#y = df_clean$avg_salaryk
+
+numeric_features <- names(dplyr::select(X, where(is.numeric)))
+print(numeric_features)
+
+X_numeric = dplyr::select(X, where(is.numeric))
+corr_matrix = cor(X_numeric, use="pairwise.complete.obs")
+
+cor.table = cor(corr_matrix)
+corrplot(cor.table)
+```
+
+# PCA
+
+```{r}
+#colSums(is.na(df_filtered))
+
+# only 33 rows are missing data out of 659... we can just drop
+df_filtered <- na.omit(df_filtered)
+
+X = dplyr::select(df_filtered, -c(avg_salaryk, min_salaryk, max_salaryk))
+numeric_features <- names(dplyr::select(X, where(is.numeric)))
+X_numeric = dplyr::select(X, where(is.numeric))
+```
+
+```{r}
+pca_result = prcomp(X_numeric, center=T, scale.=T)
+summary(pca_result)
+```
+
+```{r}
+# PCA loadings (contribution of variables to each PC)
+loadings <- pca_result$rotation
+
+PC1 = loadings[, 1]
+PC1[names(sort(abs(PC1), decreasing = TRUE))]
+```
+
+Private companies seem to be smaller.
+
+```{r}
+PC2 = loadings[, 2]
+PC2[names(sort(abs(PC2), decreasing=T))]
+```
+
+Big data tools like spark and hadoop and python are grouped together.
+```{r}
+PC3 = loadings[, 3]
+PC3[names(sort(abs(PC3), decreasing=T))]
+```
+
+
+Data visualization tools like tableau, power bi, sql are grouped together
+
+```{r}
+PC4 = loadings[, 4]
+PC4[names(sort(abs(PC4), decreasing=T))]
+```
+
+medium sized companies like aws
+
+```{r}
+PC5 = loadings[, 5]
+PC5[names(sort(abs(PC5), decreasing=T))]
+```
+
+jobs with companies in the same state seem to not be privately or publicly owned, and they want big data skills (might not be true)
+
+```{r}
+PC6 = loadings[, 6]
+PC6[names(sort(abs(PC6), decreasing=T))]
+```
+
+```{r}
+PC7 = loadings[, 7]
+PC7[names(sort(abs(PC7), decreasing=T))]
+```
+
+Job rating is positively associated with machine learning, same state and negatively related to aws.
+
+```{r}
+PC8 = loadings[, 8]
+PC8[names(sort(abs(PC8), decreasing=T))]
+```
+
+
+# Findings
+
+Our analysis reveals notable patterns in company characteristics, skill demands, and job ratings. Private companies tend to be smaller in size (1-200 employees), while medium-sized firms (201-1000 employees) are more likely to seek AWS expertise. Big data technologies such as Spark, Hadoop, and Python frequently appear together in job postings, suggesting that these skills are often bundled within the same roles. Similarly, data visualization and analytics tools like Tableau, Power BI, and SQL form another distinct skill cluster. Interestingly, jobs at companies located in the same state as the posting are less likely to be in privately or publicly owned firms, and these roles more frequently request big data capabilities — though this relationship may not be statistically robust. Regarding job satisfaction, higher ratings are positively associated with roles requiring machine learning skills and with positions in the same state, while AWS requirements appear to have a small negative association with ratings.
+
+For job seekers, these findings can provide a strategic edge in targeting opportunities that align with both career goals and preferred work environments. Knowing that private companies are often smaller may appeal to candidates seeking close-knit teams, faster decision-making, and broader role responsibilities, whereas those aiming for AWS-related roles might focus their search on medium-sized employers. Recognizing that certain skills cluster together — such as big data technologies (Spark, Hadoop, Python) or data visualization tools (Tableau, Power BI, SQL) — allows applicants to strengthen complementary skills that are likely to be requested together, increasing their competitiveness. Furthermore, understanding how job ratings relate to skill requirements can help prioritize applications: roles emphasizing machine learning or located within the same state may be linked to higher satisfaction, while heavy AWS emphasis could signal a more demanding technical environment. Overall, these insights help candidates tailor their skill development and job search strategy to maximize fit and potential satisfaction.
+
+

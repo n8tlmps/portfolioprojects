@@ -60,3 +60,25 @@ Key columns include:
 ### Analytics Layer (`analytics/`)
 - Automatically generated summary reports (JSON)
 - Designed for downstream dashboards or notebooks
+
+## Automated Analytics
+A scheduled analytics step computes:
+- Total number of trials
+- Trial status distribution (Completed, Terminated, Recruiting, etc.)
+- Termination rate overall and by phase
+- Enrollment statistics (min, max, mean, median)
+- Missingness metrics for key fields
+
+These metrics are written to:
+```
+analytics/clinicaltrials/dt=YYYY-MM-DD/summary.json
+```
+
+## Scheduling & Automation
+- The pipeline is orchestrated using **EventBridge**.
+- During development, jobs run every 5 minutes
+- In production, the schedule can be reduced to daily runs.
+
+# Summary and Takeaways
+Learning about data migration and the tools used to build an effective scheduled batch analytics pipeline felt very important to me as a statistics and data science student. Data science, analytics, and informatics relies on reliable and repeatable data ingestion, so it was relieving to discover that minimial infrastructure can still implement scalable analytics systems with tools like AWS Lambda, S3, and EventBridge.
+
